@@ -67,13 +67,23 @@ df = df.fillna("")
 top_left, top_right = st.columns([1, 2])
 
 with top_left:
-    st.metric("Total Requirements", len(df))
+    st.markdown("<br><br>", unsafe_allow_html=True)
+
+    st.markdown(
+        f"""
+        <div style='text-align: center'>
+            <div style='font-size: 18px; color: gray;'>Total Requirements</div>
+            <div style='font-size: 40px; font-weight: bold;'>{len(df)}</div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
 with top_right:
     st.subheader("Status Distribution")
 
     if not counts.empty:
-        chart = alt.Chart(counts).mark_bar(size=70).encode(
+        chart = alt.Chart(counts).mark_bar(size=40).encode(
             x=alt.X("evaluation_status:N", title="Status"),
             y=alt.Y("cnt:Q", title="Count"),
             color=alt.Color(
@@ -85,7 +95,7 @@ with top_right:
                 legend=None
             )
         ).properties(
-            height=320
+            height=220
         )
 
         text = chart.mark_text(

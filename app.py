@@ -92,11 +92,23 @@ with left:
         "Source Reference"
     ]
 
+    def add_status_color(val):
+    if val == "Evaluated":
+        return "🟢 Evaluated"
+    elif val == "In Evaluation":
+        return "🟡 In Evaluation"
+    elif val == "In Assignment":
+        return "🔴 In Assignment"
+    return val
+
+display_df["Evaluation Status"] = display_df["Evaluation Status"].apply(add_status_color)
+
     st.dataframe(
         display_df,
         use_container_width=True,
         height=500
     )
+
 
 with right:
     st.subheader("Status Summary")

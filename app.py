@@ -63,6 +63,7 @@ else:
     counts_by_project = pd.DataFrame()
 
 df = df.fillna("")
+df = df[df["requirement_id"] != ""]
 
 top_left, top_right = st.columns([1, 2])
 
@@ -149,17 +150,16 @@ st.dataframe(
 )
 
 if project == "ALL" and not counts_by_project.empty:
-    st.divider()
     st.subheader("By Project")
     pivot_df = counts_by_project.pivot(
-    index="project",
-    columns="evaluation_status",
-    values="cnt"
-).fillna(0)
-# 👇 ordonare custom
-order = ["In Assignment", "In Evaluation", "Evaluated"]
-pivot_df = pivot_df.reindex(columns=order, fill_value=0)
-st.dataframe(pivot_df, use_container_width=True)
+        index="project",
+        columns="evaluation_status",
+        values="cnt"
+    ).fillna(0)
+
+    pivot_df = pivot_df[["In Assignment", "In Evaluation", "Evaluated"]]
+
+    st.dataframe(pivot_df, use_container_width=True)
 
 st.divider()
 

@@ -85,10 +85,11 @@ with top_right:
     if not counts.empty:
         chart = alt.Chart(counts).mark_bar(size=40).encode(
     x=alt.X(
-        "evaluation_status:N",
-        title="Status",
-        axis=alt.Axis(labelAngle=0)
-    ),
+    "evaluation_status:N",
+    title="Status",
+    sort=["In Assignment", "In Evaluation", "Evaluated"],  # 👈 AICI
+    axis=alt.Axis(labelAngle=0)
+),
     y=alt.Y("cnt:Q", title="Count"),
     color=alt.Color(
         "evaluation_status:N",

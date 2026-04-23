@@ -103,16 +103,23 @@ def add_status_color(val):
 
 display_df["Evaluation Status"] = display_df["Evaluation Status"].apply(add_status_color)
 
+st.dataframe(
+    display_df,
+    use_container_width=True,
+    height=500
+)
+
+
+with left:
+    st.subheader("Requirements Table")
+
+    display_df["Evaluation Status"] = display_df["Evaluation Status"].apply(add_status_color)
+
     st.dataframe(
         display_df,
         use_container_width=True,
         height=500
     )
-
-
-with right:
-    st.subheader("Status Summary")
-    st.dataframe(counts, use_container_width=True, hide_index=True)
 
     if not counts.empty:
         chart_df = counts.set_index("evaluation_status")

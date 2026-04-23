@@ -84,19 +84,24 @@ with top_right:
 
     if not counts.empty:
         chart = alt.Chart(counts).mark_bar(size=40).encode(
-            x=alt.X("evaluation_status:N", title="Status"),
-            y=alt.Y("cnt:Q", title="Count"),
-            color=alt.Color(
-                "evaluation_status:N",
-                scale=alt.Scale(
-                    domain=["Evaluated", "In Evaluation", "In Assignment"],
-                    range=["#22c55e", "#facc15", "#ef4444"]
-                ),
-                legend=None
-            )
-        ).properties(
-            height=220
-        )
+    x=alt.X(
+        "evaluation_status:N",
+        title="Status",
+        axis=alt.Axis(labelAngle=0)
+    ),
+    y=alt.Y("cnt:Q", title="Count"),
+    color=alt.Color(
+        "evaluation_status:N",
+        scale=alt.Scale(
+            domain=["Evaluated", "In Evaluation", "In Assignment"],
+            range=["#22c55e", "#facc15", "#ef4444"]
+        ),
+        legend=None
+    )
+).properties(
+    height=220,
+    width=300
+)
 
         text = chart.mark_text(
             align="center",

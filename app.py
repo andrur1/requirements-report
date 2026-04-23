@@ -1,7 +1,7 @@
 import streamlit as st
 import duckdb
 
-st.title("Requirements Report")
+st.title("📊 Requirements Evaluation Dashboard")
 
 con = duckdb.connect("requirements.duckdb")
 

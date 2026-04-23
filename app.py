@@ -113,33 +113,36 @@ with left:
 
 with right:
     st.subheader("Status Summary")
-    st.dataframe(counts, use_container_width=True, hide_index=True)
+
 
     if not counts.empty:
-        chart = alt.Chart(counts).mark_bar().encode(
-            x=alt.X("evaluation_status:N", title="Status"),
-            y=alt.Y("cnt:Q", title="Count"),
-            color=alt.Color(
-                "evaluation_status:N",
-                scale=alt.Scale(
-                    domain=["Evaluated", "In Evaluation", "In Assignment"],
-                    range=["#22c55e", "#facc15", "#ef4444"]
-                ),
-                legend=None
-            )
-        )
+        chart = alt.Chart(counts).mark_bar(size=60).encode(
+    x=alt.X("evaluation_status:N", title="Status"),
+    y=alt.Y("cnt:Q", title="Count"),
+    color=alt.Color(
+        "evaluation_status:N",
+        scale=alt.Scale(
+            domain=["Evaluated", "In Evaluation", "In Assignment"],
+            range=["#22c55e", "#facc15", "#ef4444"]
+        ),
+        legend=None
+    )
+).properties(
+    height=400  # 👈 asta îl face mai mare
+)
 
-        text = chart.mark_text(
-            align="center",
-            baseline="bottom",
-            dy=-5
-        ).encode(
-            text="cnt:Q"
-        )
+text = chart.mark_text(
+    align="center",
+    baseline="bottom",
+    dy=-5,
+    fontSize=14
+).encode(
+    text="cnt:Q"
+)
 
-        st.altair_chart(chart + text, use_container_width=True)
+st.altair_chart(chart + text, use_container_width=True)
 
-    if project == "ALL" and not counts_by_project.empty:
+if project == "ALL" and not counts_by_project.empty:
         st.subheader("By Project")
         pivot_df = counts_by_project.pivot(
             index="project",

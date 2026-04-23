@@ -1,6 +1,7 @@
 import streamlit as st
 import duckdb
 import pandas as pd
+import altair as alt
 
 st.set_page_config(
     page_title="Requirements Evaluation Dashboard",
@@ -92,38 +93,51 @@ with left:
         "Source Reference"
     ]
 
-def add_status_color(val):
-    if val == "Evaluated":
-        return "🟢 Evaluated"
-    elif val == "In Evaluation":
-        return "🟡 In Evaluation"
-    elif val == "In Assignment":
-        return "🔴 In Assignment"
-    return val
-
-display_df["Evaluation Status"] = display_df["Evaluation Status"].apply(add_status_color)
-
-st.dataframe(
-    display_df,
-    use_container_width=True,
-    height=500
-)
-
-
-with left:
-    st.subheader("Requirements Table")
+    def add_status_color(val):
+        if val == "Evaluated":
+            return "🟢 Evaluated"
+        elif val == "In Evaluation":
+            return "🟡 In Evaluation"
+        elif val == "In Assignment":
+            return "🔴 In Assignment"
+        return val
 
     display_df["Evaluation Status"] = display_df["Evaluation Status"].apply(add_status_color)
 
     st.dataframe(
         display_df,
         use_container_width=True,
-        height=500
+        height=500,
+        hide_index=True
     )
 
+with right:
+    st.subheader("Status Summary")
+    st.dataframe(counts, use_container_width=True, hide_index=True)
+
     if not counts.empty:
-        chart_df = counts.set_index("evaluation_status")
-        st.bar_chart(chart_df["cnt"])
+        chart = alt.Chart(counts).mark_bar().encode(
+            x=alt.X("evaluation_status:N", title="Status"),
+            y=alt.Y("cnt:Q", title="Count"),
+            color=alt.Color(
+                "evaluation_status:N",
+                scale=alt.Scale(
+                    domain=["Evaluated", "In Evaluation", "In Assignment"],
+                    range=["#22c55e", "#facc15", "#ef4444"]
+                ),
+                legend=None
+            )
+        )
+
+        text = chart.mark_text(
+            align="center",
+            baseline="bottom",
+            dy=-5
+        ).encode(
+            text="cnt:Q"
+        )
+
+        st.altair_chart(chart + text, use_container_width=True)
 
     if project == "ALL" and not counts_by_project.empty:
         st.subheader("By Project")

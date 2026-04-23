@@ -145,7 +145,6 @@ display_df["Evaluation Status"] = display_df["Evaluation Status"].apply(add_stat
 st.dataframe(
     display_df,
     use_container_width=True,
-    height=650,
     hide_index=True
 )
 

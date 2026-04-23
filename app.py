@@ -92,7 +92,7 @@ with left:
         "Source Reference"
     ]
 
-    def add_status_color(val):
+def add_status_color(val):
     if val == "Evaluated":
         return "🟢 Evaluated"
     elif val == "In Evaluation":

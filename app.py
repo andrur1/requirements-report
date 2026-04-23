@@ -156,9 +156,9 @@ if project == "ALL" and not counts_by_project.empty:
     columns="evaluation_status",
     values="cnt"
 ).fillna(0)
-
 # 👇 ordonare custom
-pivot_df = pivot_df[["In Assignment", "In Evaluation", "Evaluated"]]
+order = ["In Assignment", "In Evaluation", "Evaluated"]
+pivot_df = pivot_df.reindex(columns=order, fill_value=0)
 st.dataframe(pivot_df, use_container_width=True)
 
 st.divider()

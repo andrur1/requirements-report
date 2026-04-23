@@ -64,92 +64,83 @@ else:
 
 df = df.fillna("")
 
-total_requirements = len(df)
-evaluated_count = len(df[df["evaluation_status"] == "Evaluated"])
-in_evaluation_count = len(df[df["evaluation_status"] == "In Evaluation"])
-in_assignment_count = len(df[df["evaluation_status"] == "In Assignment"])
+top_left, top_right = st.columns([1, 2])
 
-m1, m2, m3, m4 = st.columns(4)
-m1.metric("Total Requirements", total_requirements)
-m2.metric("Evaluated", evaluated_count)
-m3.metric("In Evaluation", in_evaluation_count)
-m4.metric("In Assignment", in_assignment_count)
+with top_left:
+    st.metric("Total Requirements", len(df))
+
+with top_right:
+    st.subheader("Status Distribution")
+
+    if not counts.empty:
+        chart = alt.Chart(counts).mark_bar(size=70).encode(
+            x=alt.X("evaluation_status:N", title="Status"),
+            y=alt.Y("cnt:Q", title="Count"),
+            color=alt.Color(
+                "evaluation_status:N",
+                scale=alt.Scale(
+                    domain=["Evaluated", "In Evaluation", "In Assignment"],
+                    range=["#22c55e", "#facc15", "#ef4444"]
+                ),
+                legend=None
+            )
+        ).properties(
+            height=320
+        )
+
+        text = chart.mark_text(
+            align="center",
+            baseline="bottom",
+            dy=-5,
+            fontSize=14
+        ).encode(
+            text="cnt:Q"
+        )
+
+        st.altair_chart(chart + text, use_container_width=True)
 
 st.divider()
 
-left, right = st.columns([2.2, 1])
+st.subheader("Requirements Table")
 
-with left:
-    st.subheader("Requirements Table")
+display_df = df.copy()
+display_df.columns = [
+    "Project",
+    "Requirement ID",
+    "Domain",
+    "Evaluation Status",
+    "Violations",
+    "Title",
+    "Source Reference"
+]
 
-    display_df = df.copy()
-    display_df.columns = [
-        "Project",
-        "Requirement ID",
-        "Domain",
-        "Evaluation Status",
-        "Violations",
-        "Title",
-        "Source Reference"
-    ]
+def add_status_color(val):
+    if val == "Evaluated":
+        return "🟢 Evaluated"
+    elif val == "In Evaluation":
+        return "🟡 In Evaluation"
+    elif val == "In Assignment":
+        return "🔴 In Assignment"
+    return val
 
-    def add_status_color(val):
-        if val == "Evaluated":
-            return "🟢 Evaluated"
-        elif val == "In Evaluation":
-            return "🟡 In Evaluation"
-        elif val == "In Assignment":
-            return "🔴 In Assignment"
-        return val
+display_df["Evaluation Status"] = display_df["Evaluation Status"].apply(add_status_color)
 
-    display_df["Evaluation Status"] = display_df["Evaluation Status"].apply(add_status_color)
-
-    st.dataframe(
-        display_df,
-        use_container_width=True,
-        height=500,
-        hide_index=True
-    )
-
-with right:
-    st.subheader("Status Summary")
-
-
-    if not counts.empty:
-        chart = alt.Chart(counts).mark_bar(size=60).encode(
-    x=alt.X("evaluation_status:N", title="Status"),
-    y=alt.Y("cnt:Q", title="Count"),
-    color=alt.Color(
-        "evaluation_status:N",
-        scale=alt.Scale(
-            domain=["Evaluated", "In Evaluation", "In Assignment"],
-            range=["#22c55e", "#facc15", "#ef4444"]
-        ),
-        legend=None
-    )
-).properties(
-    height=400  # 👈 asta îl face mai mare
+st.dataframe(
+    display_df,
+    use_container_width=True,
+    height=650,
+    hide_index=True
 )
-
-text = chart.mark_text(
-    align="center",
-    baseline="bottom",
-    dy=-5,
-    fontSize=14
-).encode(
-    text="cnt:Q"
-)
-
-st.altair_chart(chart + text, use_container_width=True)
 
 if project == "ALL" and not counts_by_project.empty:
-        st.subheader("By Project")
-        pivot_df = counts_by_project.pivot(
-            index="project",
-            columns="evaluation_status",
-            values="cnt"
-        ).fillna(0)
-        st.dataframe(pivot_df, use_container_width=True)
+    st.divider()
+    st.subheader("By Project")
+    pivot_df = counts_by_project.pivot(
+        index="project",
+        columns="evaluation_status",
+        values="cnt"
+    ).fillna(0)
+    st.dataframe(pivot_df, use_container_width=True)
 
 st.divider()
 

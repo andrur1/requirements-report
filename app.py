@@ -152,11 +152,14 @@ if project == "ALL" and not counts_by_project.empty:
     st.divider()
     st.subheader("By Project")
     pivot_df = counts_by_project.pivot(
-        index="project",
-        columns="evaluation_status",
-        values="cnt"
-    ).fillna(0)
-    st.dataframe(pivot_df, use_container_width=True)
+    index="project",
+    columns="evaluation_status",
+    values="cnt"
+).fillna(0)
+
+# 👇 ordonare custom
+pivot_df = pivot_df[["In Assignment", "In Evaluation", "Evaluated"]]
+st.dataframe(pivot_df, use_container_width=True)
 
 st.divider()
 

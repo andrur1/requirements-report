@@ -2,21 +2,19 @@ import streamlit as st
 import duckdb
 import pandas as pd
 
-
-st.title("📊 Requirements Evaluation Dashboard")
-
 st.set_page_config(
     page_title="Requirements Evaluation Dashboard",
     layout="wide"
 )
 
-
 st.title("📊 Requirements Evaluation Dashboard")
 st.caption("Unified evaluation report for AURORA, BOLT, and COMET")
+
 
 @st.cache_resource
 def get_connection():
     return duckdb.connect("requirements.duckdb")
+
 
 con = get_connection()
 
@@ -53,21 +51,6 @@ else:
         ORDER BY requirement_id
     """).fetchdf()
 
-<<<<<<< HEAD
-st.dataframe(df)
-
-counts = con.execute(f"""
-    SELECT evaluation_status, COUNT(*) AS cnt
-    FROM requirements_report
-    {"" if project == "ALL" else f"WHERE project = '{project}'"}
-    GROUP BY 1
-    ORDER BY 1
-""").fetchdf()
-
-st.subheader("Status Summary")
-st.dataframe(counts)
-st.bar_chart(counts.set_index("evaluation_status"))
-=======
     counts = con.execute(f"""
         SELECT evaluation_status, COUNT(*) AS cnt
         FROM requirements_report
@@ -80,7 +63,6 @@ st.bar_chart(counts.set_index("evaluation_status"))
 
 df = df.fillna("")
 
-# KPI metrics
 total_requirements = len(df)
 evaluated_count = len(df[df["evaluation_status"] == "Evaluated"])
 in_evaluation_count = len(df[df["evaluation_status"] == "In Evaluation"])
@@ -110,19 +92,8 @@ with left:
         "Source Reference"
     ]
 
-    def color_status(val):
-        if val == "Evaluated":
-            return "background-color: #d1fae5; color: #065f46; font-weight: 600;"
-        elif val == "In Evaluation":
-            return "background-color: #fef3c7; color: #92400e; font-weight: 600;"
-        elif val == "In Assignment":
-            return "background-color: #fee2e2; color: #991b1b; font-weight: 600;"
-        return ""
-
-    styled_df = display_df.style.applymap(color_status, subset=["Evaluation Status"])
-
     st.dataframe(
-        styled_df,
+        display_df,
         use_container_width=True,
         height=500
     )
@@ -153,4 +124,3 @@ st.download_button(
     file_name=f"requirements_report_{project.lower()}.csv",
     mime="text/csv"
 )
->>>>>>> e370a9c (commit on app.py)

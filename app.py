@@ -25,3 +25,15 @@ else:
     """).fetchdf()
 
 st.dataframe(df)
+
+counts = con.execute(f"""
+    SELECT evaluation_status, COUNT(*) AS cnt
+    FROM requirements_report
+    {"" if project == "ALL" else f"WHERE project = '{project}'"}
+    GROUP BY 1
+    ORDER BY 1
+""").fetchdf()
+
+st.subheader("Status Summary")
+st.dataframe(counts)
+st.bar_chart(counts.set_index("evaluation_status"))
